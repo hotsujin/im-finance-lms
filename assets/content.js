@@ -59,6 +59,7 @@ const LABS = [
   {
     id: "1", no: "실습 1", feature: "고급 데이터 분석", dur: "60분", dataKey: "transactions", data: "transactions.csv",
     chatUrl: "https://chatgpt.com/share/6a2ec05c-c79c-83ee-b8a2-0306c1361c57",
+    chatUrl2: "https://chatgpt.com/share/6a2f3f42-feb8-83ee-85cd-e56873603cc9",
     title: "데이터 정의 + 정제·자동화",
     purpose: "분석은 데이터를 정의하는 데서 시작합니다. 가상 N-Bank(20~30대 소액대출 추천 서비스)에 어떤 데이터가 왜 필요한지 먼저 \"데이터 정의서\"로 정리하고, 그 기준에 맞춰 지저분한 거래 데이터를 정제합니다. 매달 반복하는 정리 작업은 다음에도 그대로 쓸 수 있게 스크립트로 남깁니다.",
     prompt: "20~30대 소액대출 추천에 필요한 항목부터 정의서로 정리하고, 그 기준으로 transactions.csv 품질을 진단해줘 — 결측·이상치·단위 혼합·날짜 형식…",
