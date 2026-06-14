@@ -1,5 +1,5 @@
 /* ===================================================================
-   app.js — 해시 라우팅 SPA + 렌더링 + 공유 보드(localStorage)
+   app.js — 해시 라우팅 SPA + 렌더링 + 공유 보드(Supabase, 진짜 공유)
    페이지: #/(홈) · #/guide(학습 가이드) · #/board(공유 보드 목록)
           · #/board/<id>(실습별 공유 보드) · #/slides(강의 장표)
           · #/resources(자료실) · #/lab/<id>(실습 상세) · #/data/<key>(데이터 원본)
@@ -399,10 +399,34 @@ function slidesView() {
   ${footer()}`;
 }
 
-/* ---------- 공유 보드 (localStorage, 실습별) ---------- */
-function boardKey(labId) { return "imf_board_v2_" + labId; }
-function loadPosts(labId) { try { return JSON.parse(localStorage.getItem(boardKey(labId))) || []; } catch { return []; } }
-function savePosts(labId, p) { localStorage.setItem(boardKey(labId), JSON.stringify(p)); }
+/* ---------- 공유 보드 (Supabase, 실습별 · 여러 사람이 같은 보드를 함께 봄) ---------- */
+/* Supabase 연결 — anon key는 공개용이라 코드에 넣어도 안전 */
+const SUPABASE_URL = "https://ppuxtgobvsvljkpwcipm.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwdXh0Z29idnN2bGprcHdjaXBtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4MzY5OTYsImV4cCI6MjA5NDQxMjk5Nn0.c2N-F7PNLwvudimhza-dlKlbdykvKbgAyagHhSmOQxM";
+const sb = (typeof supabase !== "undefined") ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+/* 좋아요 중복 방지 — 한 브라우저에서 같은 글 1회만 (localStorage로 가볍게) */
+function likedSet() { try { return new Set(JSON.parse(localStorage.getItem("imf_liked") || "[]")); } catch { return new Set(); } }
+function markLiked(id) { const s = likedSet(); s.add(String(id)); localStorage.setItem("imf_liked", JSON.stringify([...s])); }
+
+/* lab_id로 글+댓글 가져오기 (최신순). 테이블이 없거나 오류면 빈 배열 반환 */
+async function fetchPosts(labId) {
+  if (!sb) return [];
+  const { data: posts, error } = await sb
+    .from("posts").select("*").eq("lab_id", labId).order("created_at", { ascending: false });
+  if (error || !posts) return [];
+  const ids = posts.map((p) => p.id);
+  let comments = [];
+  if (ids.length) {
+    const { data: cs } = await sb
+      .from("comments").select("*").in("post_id", ids).order("created_at", { ascending: true });
+    comments = cs || [];
+  }
+  const byPost = {};
+  comments.forEach((c) => { (byPost[c.post_id] = byPost[c.post_id] || []).push(c); });
+  posts.forEach((p) => { p.comments = byPost[p.id] || []; });
+  return posts;
+}
 
 /* 보드 목록 (실습 6개 보드로 안내) */
 function boardIndexView() {
@@ -411,24 +435,20 @@ function boardIndexView() {
   <main>
     <section class="detail-hero">
       <div class="wrap"><p class="eyebrow">Shared Board</p><h1>공유 보드</h1>
-        <p>실습마다 보드가 따로 있습니다. 결과를 올리고, 댓글·좋아요로 서로 피드백하세요. 로그인은 필요 없습니다.</p></div>
+        <p>실습마다 보드가 따로 있습니다. 결과를 올리고, 댓글·좋아요로 서로 피드백하세요. 로그인은 필요 없고, <b>참여자 모두가 같은 보드를 함께 봅니다.</b></p></div>
     </section>
     <section class="section">
       <div class="wrap">
         <div class="grid grid-2">
-          ${LABS.map((l) => {
-            const n = loadPosts(l.id).length;
-            return `
+          ${LABS.map((l) => `
             <a class="card is-link board-index-card" href="#/board/${l.id}">
               <div class="lab-no">${esc(l.no)} 공유 보드</div>
               <h3>${esc(l.title)}</h3>
               <p class="side-note" style="margin:8px 0 14px">${esc(l.out)}</p>
               <div class="lab-foot">
                 <span class="btn btn--ghost btn--sm">보드 열기 →</span>
-                <span class="board-count">글 ${n}개</span>
               </div>
-            </a>`;
-          }).join("")}
+            </a>`).join("")}
         </div>
       </div>
     </section>
@@ -448,7 +468,7 @@ function boardView(labId) {
         <a class="back-link" href="#/board">← 공유 보드 목록</a>
         <p class="eyebrow">Shared Board · ${esc(l.no)}</p>
         <h1>${esc(l.title)} 공유 보드</h1>
-        <p>${esc(l.no)} 결과를 올리고 댓글·좋아요로 나눠 보세요. 글은 이 브라우저에 저장됩니다.</p>
+        <p>${esc(l.no)} 결과를 올리고 댓글·좋아요로 나눠 보세요. 글은 참여자 모두에게 실시간으로 공유됩니다.</p>
       </div>
     </section>
     <section class="section">
@@ -467,32 +487,39 @@ function boardView(labId) {
           </form>
         </div>
         <div class="board-grid" id="boardGrid"></div>
-        <div class="demo-note">지금은 글이 <b>이 브라우저에만</b> 저장됩니다. 여러 사람이 함께 보려면 추후 연결이 필요합니다.</div>
       </div>
     </section>
   </main>
   ${footer()}`;
 }
 
-function renderBoardPosts(labId) {
+async function renderBoardPosts(labId) {
   const grid = $("#boardGrid"); if (!grid) return;
-  const posts = loadPosts(labId);
+  grid.innerHTML = `<div class="board-empty">불러오는 중…</div>`;
+  let posts = [];
+  try { posts = await fetchPosts(labId); }
+  catch { grid.innerHTML = `<div class="board-empty">보드를 불러오지 못했습니다. 잠시 후 다시 시도하세요.</div>`; return; }
+  // 라우팅이 바뀌었으면(다른 페이지로 이동) 렌더 취소
+  if (!document.body.contains(grid)) return;
+
   if (!posts.length) { grid.innerHTML = `<div class="board-empty">아직 글이 없습니다. 첫 공유를 남겨보세요.</div>`; return; }
+  const liked = likedSet();
   grid.innerHTML = posts.map((p) => {
     const comments = p.comments || [];
+    const isLiked = liked.has(String(p.id));
     return `
     <div class="post" data-id="${esc(p.id)}">
       <div class="post-head">
         <div class="who">
           <div class="avatar">${esc((p.nick || "?").trim().charAt(0).toUpperCase())}</div>
-          <div><b>${esc(p.nick)}</b><small>${esc(new Date(p.ts).toLocaleString("ko-KR"))}</small></div>
+          <div><b>${esc(p.nick)}</b><small>${esc(new Date(p.created_at).toLocaleString("ko-KR"))}</small></div>
         </div>
         <button class="del" title="삭제" data-id="${esc(p.id)}">삭제</button>
       </div>
       <div class="body">${esc(p.body)}</div>
       ${p.img ? `<img class="attach" src="${esc(p.img)}" alt="첨부 이미지" loading="lazy" onerror="this.style.display='none'">` : ""}
       <div class="post-actions">
-        <button class="like ${p.liked ? "on" : ""}" data-id="${esc(p.id)}">♥ 좋아요 <span>${p.likes || 0}</span></button>
+        <button class="like ${isLiked ? "on" : ""}" data-id="${esc(p.id)}" data-likes="${p.likes || 0}">♥ 좋아요 <span>${p.likes || 0}</span></button>
         <span class="cmt-count">댓글 ${comments.length}</span>
       </div>
       <div class="comments">
@@ -506,34 +533,32 @@ function renderBoardPosts(labId) {
     </div>`;
   }).join("");
 
-  // 삭제
-  grid.querySelectorAll(".del").forEach((b) => b.addEventListener("click", () => {
-    savePosts(labId, loadPosts(labId).filter((x) => String(x.id) !== String(b.dataset.id)));
+  // 삭제 (delete)
+  grid.querySelectorAll(".del").forEach((b) => b.addEventListener("click", async () => {
+    b.disabled = true;
+    try { await sb.from("posts").delete().eq("id", b.dataset.id); } catch {}
     renderBoardPosts(labId);
   }));
-  // 좋아요 (localStorage)
-  grid.querySelectorAll(".like").forEach((b) => b.addEventListener("click", () => {
-    const posts = loadPosts(labId);
-    const p = posts.find((x) => String(x.id) === String(b.dataset.id));
-    if (!p) return;
-    p.liked = !p.liked;
-    p.likes = (p.likes || 0) + (p.liked ? 1 : -1);
-    if (p.likes < 0) p.likes = 0;
-    savePosts(labId, posts);
+  // 좋아요 (update: likes+1, 한 브라우저 1회)
+  grid.querySelectorAll(".like").forEach((b) => b.addEventListener("click", async () => {
+    const id = b.dataset.id;
+    if (likedSet().has(String(id))) return;            // 이미 누른 글이면 무시
+    const next = (parseInt(b.dataset.likes, 10) || 0) + 1;
+    b.disabled = true;
+    try {
+      const { error } = await sb.from("posts").update({ likes: next }).eq("id", id);
+      if (!error) markLiked(id);
+    } catch {}
     renderBoardPosts(labId);
   }));
-  // 댓글
-  grid.querySelectorAll(".cmt-form").forEach((f) => f.addEventListener("submit", (e) => {
+  // 댓글 (insert)
+  grid.querySelectorAll(".cmt-form").forEach((f) => f.addEventListener("submit", async (e) => {
     e.preventDefault();
     const nick = f.querySelector(".cmt-nick").value.trim();
     const text = f.querySelector(".cmt-text").value.trim();
     if (!nick || !text) return;
-    const posts = loadPosts(labId);
-    const p = posts.find((x) => String(x.id) === String(f.dataset.id));
-    if (!p) return;
-    p.comments = p.comments || [];
-    p.comments.push({ nick, text, ts: Date.now() });
-    savePosts(labId, posts);
+    const btn = f.querySelector("button"); btn.disabled = true;
+    try { await sb.from("comments").insert({ post_id: f.dataset.id, nick, text }); } catch {}
     renderBoardPosts(labId);
   }));
 }
@@ -541,16 +566,17 @@ function renderBoardPosts(labId) {
 function wireBoard(labId) {
   const form = $("#boardForm"); if (!form) return;
   renderBoardPosts(labId);
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const nick = $("#bNick").value.trim();
     const body = $("#bBody").value.trim();
     const img = $("#bImg").value.trim();
     if (!nick || !body) return;
-    const posts = loadPosts(labId);
-    posts.unshift({ id: Date.now() + "-" + Math.random().toString(36).slice(2, 7), nick, body, img, likes: 0, liked: false, comments: [], ts: Date.now() });
-    savePosts(labId, posts);
+    const btn = form.querySelector('button[type="submit"]'); btn.disabled = true;
+    try { await sb.from("posts").insert({ lab_id: labId, nick, body, img: img || null }); }
+    catch {}
     form.reset();
+    btn.disabled = false;
     renderBoardPosts(labId);
   });
 }
