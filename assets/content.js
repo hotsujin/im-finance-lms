@@ -57,6 +57,7 @@ const SCHEDULE = [
 const LABS = [
   {
     id: "1", no: "실습 1", feature: "고급 데이터 분석", dur: "100분", dataKey: "transactions", data: "transactions.csv",
+    chatUrl: "https://chatgpt.com/share/6a2e60bb-5ac4-83e8-940d-dca4be078a28",
     title: "데이터 정의 + 정제·자동화",
     purpose: "분석은 데이터를 정의하는 데서 시작합니다. 가상 N-Bank(20~30대 소액대출 추천 서비스)에 어떤 데이터가 왜 필요한지 먼저 \"데이터 정의서\"로 정리하고, 그 기준에 맞춰 지저분한 거래 데이터를 정제합니다. 매달 반복하는 정리 작업은 다음에도 그대로 쓸 수 있게 스크립트로 남깁니다.",
     prompt: "20~30대 소액대출 추천에 필요한 항목부터 정의서로 정리하고, 그 기준으로 transactions.csv 품질을 진단해줘 — 결측·이상치·단위 혼합·날짜 형식…",
@@ -75,6 +76,7 @@ const LABS = [
   },
   {
     id: "2", no: "실습 2", feature: "고급 데이터 분석", dur: "90분", dataKey: "microloans", data: "microloans.csv",
+    chatUrl: "https://chatgpt.com/share/6a2e6eaa-0450-83ee-8123-8fe35c6cfdb2",
     title: "소액대출 분석 → 경영진 리포트",
     purpose: "분석가처럼 대출 데이터를 들여다보며 인사이트를 찾고, 차트와 함께 1페이지 경영진 보고서로 정리합니다.",
     prompt: "이상치 빼고 신용등급별 연체율·평균금리·평균금액을 표로…",
@@ -93,6 +95,7 @@ const LABS = [
   },
   {
     id: "3", no: "실습 3", feature: "고급 데이터 분석", dur: "60분", dataKey: "callcenter_logs", data: "callcenter_logs.csv",
+    chatUrl: "https://chatgpt.com/share/6a2e6fa5-9cdc-83ee-a0fe-7e1cc6358ed9",
     title: "콜센터 상담 로그 분석",
     purpose: "처리시간·만족도 같은 숫자와 상담요약 텍스트가 섞인 콜센터 로그를 함께 분석합니다. 무엇이 불만으로 들어오는지(VOC) 추려 분류하고, 한 장짜리 리포트로 정리하는 게 목표입니다.",
     prompt: "callcenter_logs.csv에서 상담유형 표기부터 통일하고, 유형별 건수·평균 처리시간·평균 만족도를…",
@@ -111,6 +114,7 @@ const LABS = [
   },
   {
     id: "4", no: "실습 4", feature: "웹 브라우징", dur: "60분", dataKey: "disclosures_news", data: "disclosures_news.csv (+ 웹)",
+    chatUrl: "https://chatgpt.com/share/6a2e7e2e-ab9c-83ee-9df5-62451e34b3c8",
     title: "공시·뉴스 수집·구조화",
     purpose: "여기저기 흩어진 공시·뉴스를 표와 JSON으로 정리하고, 웹에서 모은 건 출처를 붙여 사실을 확인합니다.",
     prompt: "제목에서 회사·금액·기간을 칸으로 뽑고, 유형·날짜 표기를 통일해줘…",
@@ -128,6 +132,7 @@ const LABS = [
   },
   {
     id: "5", no: "실습 5", feature: "나만의 GPT 만들기", dur: "80분", dataKey: "portfolio", data: "portfolio.csv",
+    chatUrl: "https://chatgpt.com/share/6a2e8d3f-568c-83ee-b0fe-f7c112067581",
     title: "나만의 GPT 제작 (데이터 분석 봇)",
     purpose: "매번 똑같이 지시하던 분석을, 데이터 스키마·검산 규칙·리포트 양식을 넣은 전용 GPT로 묶어 둡니다. 단순 챗봇이 아니라 우리 데이터를 아는 분석가를 만드는 게 목표입니다.",
     prompt: "상품군별 평균 달성률·총 보유잔액, 달성률 하위 5개 지점을…",
@@ -146,6 +151,7 @@ const LABS = [
   },
   {
     id: "6", no: "실습 6", feature: "GPT 에이전트", dur: "80분", dataKey: "portfolio", data: "portfolio.csv (+ 웹)",
+    chatUrl: "https://chatgpt.com/share/6a2e8d96-d4fc-83ee-9d28-f9920def6830",
     title: "GPT 에이전트 (데이터 파이프라인 자동화)",
     purpose: "수집부터 리포트까지 여러 단계를 한 번의 지시로 에이전트에 맡기되, 중간에 사람이 확인할 지점과 검증 점검표를 함께 둡니다. 편한 만큼 어디까지 맡겨도 되는지도 같이 다룹니다.",
     prompt: "정제 → 검산 분리(사람 승인) → 분석 → 리포트를 순서대로…",

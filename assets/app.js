@@ -291,8 +291,11 @@ function labDetailView(id) {
           </div>
           <div class="side-box">
             <h4>실제 GPT 채팅 보기</h4>
-            <p class="side-note">강사가 시연한 실제 대화 링크가 들어갈 자리입니다.</p>
-            <button class="btn btn--ghost btn--sm" disabled>준비 중</button>
+            ${l.chatUrl
+              ? `<p class="side-note">강사가 ${esc(l.no)}을 실제 ChatGPT에서 돌린 대화입니다. 결과·프롬프트를 그대로 볼 수 있습니다.</p>
+                 <a class="btn btn--gold btn--sm" href="${esc(l.chatUrl)}" target="_blank" rel="noopener">실제 GPT 대화 보기 ↗</a>`
+              : `<p class="side-note">강사가 시연한 실제 대화 링크가 들어갈 자리입니다.</p>
+                 <button class="btn btn--ghost btn--sm" disabled>준비 중</button>`}
           </div>
           <div class="side-box">
             <h4>공유 보드</h4>
