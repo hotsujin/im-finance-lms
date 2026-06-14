@@ -135,7 +135,7 @@ function homeView() {
         <div class="section-head">
           <p class="eyebrow">타임테이블</p>
           <h2>하루 일정 (09:00–18:00)</h2>
-          <p class="lead">교시 사이에 짧게 쉬고, 점심은 한 시간입니다. 데이터 정의부터 에이전트까지 실습 여섯 개는 모두 필수입니다.</p>
+          <p class="lead">점심은 12:00–13:00 한 시간이고, 교시 사이에 짧게 쉽니다. 데이터 정의부터 에이전트까지 실습 여섯 개는 모두 필수입니다.<br><b>※ 아래 시간은 권장 일정입니다. 강의 진행 속도에 따라 각 교시의 시작·종료 시각은 조정될 수 있습니다.</b></p>
         </div>
         <div class="table-wrap">
           <table class="schedule">

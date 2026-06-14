@@ -44,19 +44,20 @@ const HOW = [
 /* 8시간 타임테이블 — 실습 6개 + OT·토론 */
 const SCHEDULE = [
   { time: "09:00–09:20", title: "<b>OT</b> · 데이터 이해 (이론·시연)", out: "—", tag: ["theory", "이론"] },
-  { time: "09:20–11:00", title: "<b>실습1</b> 데이터 정의 + 정제·자동화", out: "데이터 정의서 · 정제 데이터셋 · 재사용 스크립트", tag: ["lab", "실습"] },
-  { time: "11:00–12:30", title: "<b>실습2</b> 소액대출 분석 → 경영진 리포트", out: "EDA · 세그먼트별 연체율 차트 · 1p 경영진 보고서 · 검증 점검표", tag: ["lab", "실습"] },
-  { time: "12:30–13:30", title: "점심", out: "—", tag: ["break", "휴식"] },
-  { time: "13:30–14:30", title: "<b>실습3</b> 콜센터 상담 로그 분석", out: "VOC 분류 · 1p 리포트 · 타 도메인 확장 기획서", tag: ["lab", "실습"] },
-  { time: "14:30–15:30", title: "<b>실습4</b> 공시·뉴스 수집·구조화", out: "정리 표 · JSON · 원문 대조 검증", tag: ["lab", "실습"] },
-  { time: "15:40–17:00", title: "<b>실습5</b> 나만의 GPT 제작", out: "데이터 분석 GPT · 지식파일·지침", tag: ["lab", "실습"] },
-  { time: "17:00–18:00", title: "<b>실습6</b> GPT 에이전트", out: "다단계 자동화 시나리오 · 검증 점검표", tag: ["lab", "실습"] },
+  { time: "09:20–10:40", title: "<b>실습1</b> 데이터 정의 + 정제·자동화", out: "데이터 정의서 · 정제 데이터셋 · 재사용 스크립트", tag: ["lab", "실습"] },
+  { time: "10:40–12:00", title: "<b>실습2</b> 소액대출 분석 → 경영진 리포트", out: "EDA · 세그먼트별 연체율 차트 · 1p 경영진 보고서 · 검증 점검표", tag: ["lab", "실습"] },
+  { time: "12:00–13:00", title: "점심", out: "—", tag: ["break", "휴식"] },
+  { time: "13:00–14:20", title: "<b>실습3</b> 콜센터 상담 로그 분석", out: "VOC 분류 · 1p 리포트 · 타 도메인 확장 기획서", tag: ["lab", "실습"] },
+  { time: "14:20–15:30", title: "<b>실습4</b> 공시·뉴스 수집·구조화", out: "정리 표 · JSON · 원문 대조 검증", tag: ["lab", "실습"] },
+  { time: "15:30–15:40", title: "휴식", out: "—", tag: ["break", "휴식"] },
+  { time: "15:40–16:50", title: "<b>실습5</b> 나만의 GPT 제작", out: "데이터 분석 GPT · 지식파일·지침", tag: ["lab", "실습"] },
+  { time: "16:50–18:00", title: "<b>실습6</b> GPT 에이전트", out: "다단계 자동화 시나리오 · 검증 점검표", tag: ["lab", "실습"] },
 ];
 
 /* 실습 6개 — 상세는 목표·활용 기능·예상 산출물만 (절차·힌트는 PPT/시트에서) */
 const LABS = [
   {
-    id: "1", no: "실습 1", feature: "고급 데이터 분석", dur: "100분", dataKey: "transactions", data: "transactions.csv",
+    id: "1", no: "실습 1", feature: "고급 데이터 분석", dur: "80분", dataKey: "transactions", data: "transactions.csv",
     chatUrl: "https://chatgpt.com/share/6a2ec05c-c79c-83ee-b8a2-0306c1361c57",
     title: "데이터 정의 + 정제·자동화",
     purpose: "분석은 데이터를 정의하는 데서 시작합니다. 가상 N-Bank(20~30대 소액대출 추천 서비스)에 어떤 데이터가 왜 필요한지 먼저 \"데이터 정의서\"로 정리하고, 그 기준에 맞춰 지저분한 거래 데이터를 정제합니다. 매달 반복하는 정리 작업은 다음에도 그대로 쓸 수 있게 스크립트로 남깁니다.",
@@ -75,7 +76,7 @@ const LABS = [
     deliverables: ["데이터 정의서(필요 항목·형식·검증 기준)", "정제된 거래 데이터(CSV)", "다음 달에 다시 쓰는 정제 스크립트(.py)"],
   },
   {
-    id: "2", no: "실습 2", feature: "고급 데이터 분석", dur: "90분", dataKey: "cleaned_transactions", data: "cleaned_transactions.csv (실습1 정제본)",
+    id: "2", no: "실습 2", feature: "고급 데이터 분석", dur: "80분", dataKey: "cleaned_transactions", data: "cleaned_transactions.csv (실습1 정제본)",
     chatUrl: "https://chatgpt.com/share/6a2ec3de-e84c-83e8-9978-9de6c282d0f9",
     title: "소액대출 분석 → 경영진 리포트",
     purpose: "실습1에서 정제한 거래 데이터를 그대로 이어받아, 20~30대를 연령대 세그먼트로 나눠 30일 연체율을 분석합니다. EDA·상관관계·차트로 패턴을 찾아 경영진이 30초에 읽는 1페이지 보고서로 정리하되, AI가 내놓은 숫자는 근거·재현·반증 3단계로 꼭 검증합니다.",
@@ -94,7 +95,7 @@ const LABS = [
     deliverables: ["EDA 요약(주요 지표·분포·관계)", "세그먼트별 연체율 차트", "1페이지 경영진 보고서(.pdf)", "검증 점검표(통과/미통과)"],
   },
   {
-    id: "3", no: "실습 3", feature: "고급 데이터 분석", dur: "60분", dataKey: "callcenter_logs", data: "callcenter_logs.csv",
+    id: "3", no: "실습 3", feature: "고급 데이터 분석", dur: "80분", dataKey: "callcenter_logs", data: "callcenter_logs.csv",
     chatUrl: "https://chatgpt.com/share/6a2ec58f-0c84-83e8-8019-18b522ccaf82",
     title: "콜센터 상담 로그 분석",
     purpose: "처리시간·만족도 같은 숫자와 상담요약 텍스트가 섞인 콜센터 로그를 함께 분석합니다. 무엇이 불만으로 들어오는지(VOC) 추려 분류하고 한 장짜리 리포트로 정리한 뒤, 같은 분석 흐름을 다른 업무·도메인에도 적용할 수 있게 1페이지 데이터 기획서로 확장하는 게 목표입니다.",
@@ -113,7 +114,7 @@ const LABS = [
     deliverables: ["VOC 상위 분류와 대표 요약", "유형별 지표 표(건수·처리시간·만족도·재문의율)", "1페이지 콜센터 리포트", "타 도메인 확장 1페이지 데이터 기획서"],
   },
   {
-    id: "4", no: "실습 4", feature: "웹 브라우징", dur: "60분", dataKey: "disclosures_news", data: "공시·뉴스 URL (+ disclosures_news.csv 보조)",
+    id: "4", no: "실습 4", feature: "웹 브라우징", dur: "70분", dataKey: "disclosures_news", data: "공시·뉴스 URL (+ disclosures_news.csv 보조)",
     chatUrl: "https://chatgpt.com/share/6a2ec772-3cf0-83e8-a1d8-8e578a719221",
     title: "공시·뉴스 수집·구조화",
     purpose: "분석하고 싶은 공시·뉴스 URL을 ChatGPT에 직접 넣어 열게 하고, 발행기관·공시일·핵심 이벤트·예상 영향을 표와 JSON으로 정리합니다. AI가 만든 요약은 반드시 원문과 대조해 사실을 확인합니다.",
@@ -132,7 +133,7 @@ const LABS = [
     deliverables: ["구조화된 공시·뉴스 표", "같은 내용의 JSON", "원문과 대조한 출처 검증 결과"],
   },
   {
-    id: "5", no: "실습 5", feature: "나만의 GPT 만들기", dur: "80분", dataKey: "portfolio", data: "portfolio.csv",
+    id: "5", no: "실습 5", feature: "나만의 GPT 만들기", dur: "70분", dataKey: "portfolio", data: "portfolio.csv",
     chatUrl: "https://chatgpt.com/share/6a2ec606-0f98-83ee-bcef-6f66e90eff45",
     title: "나만의 GPT 제작 (+Task 예약)",
     purpose: "매번 똑같이 지시하던 분석을, 데이터 스키마·검산 규칙·리포트 양식을 넣은 전용 GPT로 묶어 둡니다. 단순 챗봇이 아니라 우리 데이터를 아는 분석가를 만드는 게 목표입니다.",
@@ -151,7 +152,7 @@ const LABS = [
     deliverables: ["완성된 데이터 분석 GPT(지침 + 지식파일 3종)", "새 데이터로 확인한 검증 결과", "Task로 정기 자동 실행 예약 설정"],
   },
   {
-    id: "6", no: "실습 6", feature: "GPT 에이전트", dur: "80분", dataKey: "portfolio", data: "portfolio.csv (+ 웹)",
+    id: "6", no: "실습 6", feature: "GPT 에이전트", dur: "70분", dataKey: "portfolio", data: "portfolio.csv (+ 웹)",
     chatUrl: "https://chatgpt.com/share/6a2ec653-0c80-83ee-9e2e-e586e69988af",
     title: "GPT 에이전트 (데이터 파이프라인 자동화)",
     purpose: "수집부터 리포트까지 여러 단계를 한 번의 지시로 에이전트에 맡기되, 중간에 사람이 확인할 지점과 검증 점검표를 함께 둡니다. 편한 만큼 어디까지 맡겨도 되는지도 같이 다룹니다.",
